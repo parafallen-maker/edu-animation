@@ -44,3 +44,7 @@ bash scripts/render.sh /tmp/my-video --no-audio --output final.mp4
 - Google Chrome
 - FFmpeg
 
+
+## 产出示例
+
+使用此 skill 制作的 [OpenClaw 科普视频](https://github.com/parafallen-maker/edu-animation)（2 分 15 秒，8 场景，Motion Canvas + Edge TTS）。

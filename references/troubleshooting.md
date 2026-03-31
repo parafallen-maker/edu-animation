@@ -1,39 +1,59 @@
-# Known Issues & Fixes
+# Troubleshooting
 
-## Motion Canvas Rendering
+## Cairo / pycairo Build Error
 
-### Issue: headless: 'new' produces blank canvas
-Motion Canvas animations render to HTML5 Canvas, which doesn't work in headless Chrome.
-**Fix:** Always use `headless: false` in Puppeteer.
+**Error**: `Dependency "cairo" not found`
 
-### Issue: ffmpeg "No such file or directory" for audio
-Motion Canvas's ffmpeg plugin passes audio paths directly to ffmpeg subprocess.
-If the path is relative or Vite-relative, ffmpeg can't find it.
-**Fix:** Disable audio in project.ts, merge audio separately with ffmpeg after rendering.
-
-### Issue: UI covers the animation canvas
-Motion Canvas loads its editor UI by default. The actual animation renders behind it.
-**Fix:** The Vite plugin + ffmpeg handles rendering correctly via the Render button.
-Don't try to screenshot the page directly—the output goes to `output/` directory.
-
-### Issue: Vite FS allow list blocks node_modules
+**Fix**: Install system Cairo library, then reinstall Manim:
+```bash
+brew install cairo pkg-config
+pip install manim
 ```
-The request url ".../node_modules/..." is outside of Vite serving allow list.
+
+## No Manim Virtual Environment
+
+**Error**: `ModuleNotFoundError: No module named 'manim'`
+
+**Fix**: Create venv with Python 3.10+:
+```bash
+uv venv /tmp/manim-env --python 3.12
+source /tmp/manim-env/bin/activate
+uv pip install manim
 ```
-**Fix:** Set `server.fs.allow` to include the project root and `/tmp`.
 
-### Issue: `@motion-canvas/cli` package not found
-There is no standalone CLI package. Rendering requires the vite-plugin pipeline.
-**Fix:** Use Puppeteer to launch Chrome, navigate to dev server, click Render button.
+## Interactive Scene Selection
 
-## Chrome Requirements
+**Error**: Manim prompts "Choose number" and hangs in non-TTY.
 
-macOS: `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`
-Linux: `/usr/bin/google-chrome`
+**Fix**: Use `-a` flag to render all scenes:
+```bash
+manim render -qh -a -o output script.py SceneName
+```
 
-Chrome must be installed (Chromium alone may not work due to codec support).
+## Video Shorter Than Audio
 
-## Output Location
+**Cause**: `self.wait()` duration doesn't match TTS audio length.
 
-Rendered video goes to `<project>/output/<project-name>.mp4`.
-This is the Motion Canvas default, not configurable via project.ts.
+**Fix**: Check audio durations, adjust `self.wait()` in each Scene:
+```bash
+for i in audio/scene*.mp3; do
+  ffprobe -v error -show_entries format=duration -of csv=p=0 "$i"
+done
+```
+
+## Chinese Font Not Rendering
+
+**Symptom**: Boxes or missing characters in rendered video.
+
+**Fix**: Explicitly set font in every `Text()` call:
+```python
+Text("中文", font="PingFang SC", font_size=24)
+```
+
+## Scene Concatenation Order Wrong
+
+**Fix**: Manim renders Scene classes in file definition order. Ensure classes are defined top to bottom in the correct sequence.
+
+## High Quality Slow
+
+`-qk` (4K) is 4x slower than `-qh` (1080p). Use `-ql` (480p) for fast previews during development, `-qh` for final output.

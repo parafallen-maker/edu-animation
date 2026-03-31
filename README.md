@@ -44,17 +44,3 @@ bash scripts/render.sh /tmp/my-video --no-audio --output final.mp4
 - Google Chrome
 - FFmpeg
 
-## 产出示例
-
-使用此 skill 制作的 [佩剑击剑规则科普视频](https://t.me/)（2 分钟，8 场景，Motion Canvas + Edge TTS）。
-
-## 安装为 OpenClaw Skill
-
-```bash
-clawhub install edu-animation
-# 或手动复制到 ~/.openclaw/skills/edu-animation/
-```
-
-## License
-
-MIT

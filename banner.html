@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0B1120; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+  canvas { border-radius: 16px; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1200" height="400"></canvas>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 1200, H = 400;
+
+// Background
+ctx.fillStyle = '#0B1120';
+ctx.fillRect(0, 0, W, H);
+
+// Dot grid
+ctx.fillStyle = 'rgba(255,255,255,0.04)';
+for (let x = 30; x < W; x += 40) {
+  for (let y = 30; y < H; y += 40) {
+    ctx.beginPath();
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Decorative circles
+ctx.fillStyle = 'rgba(74,158,255,0.06)';
+ctx.beginPath(); ctx.arc(W * 0.85, H * 0.2, 180, 0, Math.PI * 2); ctx.fill();
+ctx.fillStyle = 'rgba(255,107,107,0.05)';
+ctx.beginPath(); ctx.arc(W * 0.15, H * 0.8, 150, 0, Math.PI * 2); ctx.fill();
+
+// Steps
+const steps = [
+  { icon: '📝', label: 'Script', color: '#4A9EFF' },
+  { icon: '🎙️', label: 'TTS', color: '#FF6B6B' },
+  { icon: '💻', label: 'Code', color: '#A78BFA' },
+  { icon: '▶️', label: 'Render', color: '#4ADE80' },
+  { icon: '🔀', label: 'Merge', color: '#FBBF24' },
+  { icon: '🎬', label: 'Video', color: '#F97316' },
+];
+
+const boxW = 140, boxH = 120, gap = 36;
+const totalW = steps.length * boxW + (steps.length - 1) * gap;
+const startX = (W - totalW) / 2;
+const boxY = (H - boxH) / 2 - 10;
+
+steps.forEach((step, i) => {
+  const x = startX + i * (boxW + gap);
+
+  // Box
+  ctx.fillStyle = 'rgba(19,32,64,0.9)';
+  ctx.strokeStyle = step.color;
+  ctx.lineWidth = 2;
+  roundRect(ctx, x, boxY, boxW, boxH, 20);
+  ctx.fill();
+  ctx.stroke();
+
+  // Glow
+  ctx.shadowColor = step.color;
+  ctx.shadowBlur = 24;
+  ctx.strokeStyle = step.color;
+  ctx.lineWidth = 1;
+  roundRect(ctx, x, boxY, boxW, boxH, 20);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Left accent strip
+  ctx.fillStyle = step.color;
+  roundRect(ctx, x + 8, boxY + 20, 6, boxH - 40, 3);
+  ctx.fill();
+
+  // Icon
+  ctx.font = '36px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(step.icon, x + boxW / 2, boxY + 52);
+
+  // Label
+  ctx.font = 'bold 20px "SF Pro Display", "PingFang SC", sans-serif';
+  ctx.fillStyle = '#E2E8F0';
+  ctx.fillText(step.label, x + boxW / 2, boxY + 90);
+
+  // Arrow
+  if (i < steps.length - 1) {
+    const arrowX = x + boxW + gap / 2;
+    const arrowY = boxY + boxH / 2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(arrowX - 12, arrowY);
+    ctx.lineTo(arrowX + 12, arrowY);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.beginPath();
+    ctx.moveTo(arrowX + 12, arrowY);
+    ctx.lineTo(arrowX + 4, arrowY - 6);
+    ctx.lineTo(arrowX + 4, arrowY + 6);
+    ctx.closePath();
+    ctx.fill();
+  }
+});
+
+// Title
+ctx.font = 'bold 28px "SF Pro Display", "PingFang SC", sans-serif';
+ctx.fillStyle = '#FFFFFF';
+ctx.textAlign = 'center';
+ctx.fillText('edu-animation', W / 2, boxY + boxH + 60);
+
+// Subtitle
+ctx.font = '16px "SF Pro Text", "PingFang SC", sans-serif';
+ctx.fillStyle = '#64748B';
+ctx.fillText('Script → TTS → Motion Canvas → MP4', W / 2, boxY + boxH + 88);
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+// Save
+const link = document.createElement('a');
+link.download = 'banner.png';
+link.href = c.toDataURL('image/png');
+link.click();
+</script>
+</body>
+</html>

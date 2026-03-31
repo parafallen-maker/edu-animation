@@ -1,0 +1,5 @@
+node_modules/
+output/
+audio/*.mp3
+*.skill
+.DS_Store

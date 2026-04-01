@@ -60,7 +60,6 @@ edu-animation/
 ├── scripts/
 │   ├── generate_tts.py           ★   # TTS 旁白生成 + timeline
 │   ├── init-project.sh               # 初始化项目
-│   ├── gen-tts.sh                     # TTS (shell 版)
 │   ├── render.sh                      # 渲染 + 音频合并
 │   ├── render-keyframes.sh           # 关键帧截图
 │   └── style-scan.py                 # 代码风格扫描

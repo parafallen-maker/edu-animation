@@ -14,12 +14,13 @@ fi
 pip3 install edge-tts -q 2>&1 | tail -1
 mkdir -p "$DIR/audio"
 
+N=1
+while [ -f "$DIR/audio/scene${N}.mp3" ]; do N=$((N + 1)); done
+BASENAME="scene${N}"
+
 if [ -f "$INPUT" ]; then
   TEXT=$(cat "$INPUT")
 else
-  N=1
-  while [ -f "$DIR/audio/scene${N}.mp3" ]; do N=$((N + 1)); done
-  BASENAME="scene${N}"
   TEXT="$INPUT"
 fi
 

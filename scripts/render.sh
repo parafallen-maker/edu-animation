@@ -16,10 +16,12 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-MAIN_PY=$(find "$DIR" -maxdepth 1 -name "*.py" ! -name "__init__.py" | head -1)
-if [ -z "$MAIN_PY" ]; then echo "[ERROR] No .py in $DIR"; exit 1; fi
+# Find main scene file (exclude design_system and __init__)
+MAIN_PY=$(find "$DIR" -maxdepth 1 -name "*.py" ! -name "__init__.py" ! -name "design_system.py" | head -1)
+if [ -z "$MAIN_PY" ]; then echo "[ERROR] No scene .py in $DIR"; exit 1; fi
 
-SCENE_CLASS=$(grep -oP 'class \w+\(Scene\)' "$MAIN_PY" | head -1 | sed 's/class //;s/(Scene)//')
+# Extract Scene class name (macOS compatible grep)
+SCENE_CLASS=$(grep -E 'class \w+\(Scene\)' "$MAIN_PY" | head -1 | sed 's/class //;s/(Scene).*//')
 if [ -z "$SCENE_CLASS" ]; then echo "[ERROR] No Scene class in $MAIN_PY"; exit 1; fi
 
 echo "[RENDER] $MAIN_PY :: $SCENE_CLASS (quality $QUALITY)"
@@ -35,14 +37,14 @@ for qdir in "480p15" "720p30" "1080p60" "2160p60"; do
   [ -f "$DIR/output/$qdir/raw.mp4" ] && RAW_MP4="$DIR/output/$qdir/raw.mp4" && break
 done
 if [ -z "$RAW_MP4" ]; then
-  RAW_MP4=$(find "$DIR/media" -name "*.mp4" -not -path "*/partial*" | head -1)
+  RAW_MP4=$(find "$DIR/media" -name "*.mp4" -not -path "*/partial*" 2>/dev/null | head -1)
 fi
 if [ -z "$RAW_MP4" ]; then echo "[ERROR] No rendered MP4"; exit 1; fi
 
 echo "[OK] Raw: $RAW_MP4"
 
 # Merge audio
-if [ -d "$DIR/audio" ] && [ "$(ls "$DIR/audio"/scene*.mp3 2>/dev/null | wc -l)" -gt 0 ]; then
+if [ -d "$DIR/audio" ] && ls "$DIR/audio"/scene*.mp3 >/dev/null 2>&1; then
   CL=$(mktemp)
   for f in $(ls "$DIR/audio/scene"*.mp3 | sort -V); do echo "file '$f'"; done > "$CL"
 

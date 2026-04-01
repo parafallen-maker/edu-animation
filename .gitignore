@@ -4,6 +4,7 @@ media/
 output/
 partial_movie_files/
 *.mp4
+!examples/**/*.mp4
 *.mp3
 *.wav
 *.png

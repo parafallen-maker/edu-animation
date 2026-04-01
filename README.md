@@ -91,6 +91,8 @@ Phase 5:   QA & 渲染 — 风格扫描 + 关键帧审查
 - 蓝光 = 小弹球（被弹得到处都是）
 - 红光 = 大弹球（直接穿过）
 
+<video src="https://raw.githubusercontent.com/parafallen-maker/edu-animation/main/examples/sky_blue/WhySkyIsBlue.mp4" controls width="100%"></video>
+
 1080p30，11 段 TTS 旁白自动对齐。完整代码见 [examples/sky_blue/](examples/sky_blue/)。
 
 ## License

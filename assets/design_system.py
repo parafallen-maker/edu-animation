@@ -229,6 +229,21 @@ def staggered_animation(mobjects, animation_class=FadeIn, lag_ratio=0.3, **kwarg
     return animation_class(VGroup(*mobjects), lag_ratio=lag_ratio, **kwargs)
 
 
+def icon_container(emoji, label="", color=None, size=0.6):
+    """Icon + optional label in a styled circle container."""
+    if color is None:
+        color = T.BLUE
+    circle = Circle(radius=size, fill_color=color, fill_opacity=0.12,
+                     stroke_color=color, stroke_width=2)
+    icon = Z(emoji, font_size=int(28 * size / 0.6)).move_to(circle)
+    group = VGroup(circle, icon)
+    if label:
+        lbl = Z(label, font_size=T.H4, color=T.BODY, weight=BOLD)
+        lbl.next_to(circle, DOWN, buff=T.SM)
+        group.add(lbl)
+    return group
+
+
 def annotate_arrow(start, end, label="", color=None):
     """Arrow with optional label between two points or mobjects."""
     if color is None:
